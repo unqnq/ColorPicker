@@ -30,15 +30,17 @@ public class ColorPickerControll : MonoBehaviour
         UpdatePickerPosition();
 
         foreach (SliderTextPair pair in sliderTextPairs)
-        {
+        {   
+            pair.sliderText.text = Mathf.RoundToInt(pair.slider.value).ToString();
             if (pair.slider != null && pair.sliderText != null)
             {
                 pair.slider.onValueChanged.AddListener((val) =>
                 {
-                    pair.sliderText.text = Mathf.RoundToInt(val).ToString();
+                    pair.sliderText.text = Mathf.RoundToInt(val*255).ToString();
+                    UpdateColorFromRGB();
                 });
 
-                pair.sliderText.text = Mathf.RoundToInt(pair.slider.value).ToString();
+              
             }
         }
     }
@@ -92,6 +94,7 @@ public class ColorPickerControll : MonoBehaviour
 
     private void UpdateOutputImage()
     {
+        
         colorData.currrentColor = Color.HSVToRGB(currenrtHue, currentSaturation, currentValue);
         for (int i = 0; i < outputTexture.height; i++)
         {
@@ -99,14 +102,14 @@ public class ColorPickerControll : MonoBehaviour
         }
         outputTexture.Apply();
         hexText.text = ColorUtility.ToHtmlStringRGB(colorData.currrentColor);
-        UpdateRGB();
-        // changeThisColor.GetComponent<MeshRenderer>().material.color = colorData.currrentColor;
+        
     }
     public void SetSV(float saturation, float value)
     {
         currentSaturation = saturation;
         currentValue = value;
         UpdateOutputImage();
+        UpdateRGB();
     }
     public void UpdateSVImage()
     {
@@ -122,6 +125,7 @@ public class ColorPickerControll : MonoBehaviour
 
         saturationTexture.Apply();
         UpdateOutputImage();
+        UpdateRGB();
     }
     public void OnTextInput()
     {
@@ -144,6 +148,7 @@ public class ColorPickerControll : MonoBehaviour
         hexText.text = "";
         UpdateOutputImage();
         UpdatePickerPosition();
+        UpdateRGB();
     }
     public void UpdatePickerPosition()
     {
@@ -162,11 +167,9 @@ public class ColorPickerControll : MonoBehaviour
     private void UpdateRGB()
     {
         Color color = colorData.currrentColor;
-
-        // Перетворення з 0..1 в 0..255
-        int r = Mathf.RoundToInt(color.r * 255);
-        int g = Mathf.RoundToInt(color.g * 255);
-        int b = Mathf.RoundToInt(color.b * 255);
+        float r = color.r;
+        float g = color.g;
+        float b = color.b;
 
         foreach (SliderTextPair pair in sliderTextPairs)
         {
@@ -177,20 +180,49 @@ public class ColorPickerControll : MonoBehaviour
                 if (sliderName.Contains("red"))
                 {
                     pair.slider.SetValueWithoutNotify(r);
-                    pair.sliderText.text = r.ToString();
+                    pair.sliderText.text = Mathf.RoundToInt(color.r * 255).ToString();
                 }
                 else if (sliderName.Contains("g"))
                 {
                     pair.slider.SetValueWithoutNotify(g);
-                    pair.sliderText.text = g.ToString();
+                    pair.sliderText.text = Mathf.RoundToInt(color.g * 255).ToString();
                 }
                 else if (sliderName.Contains("b"))
                 {
                     pair.slider.SetValueWithoutNotify(b);
-                    pair.sliderText.text = b.ToString();
+                    pair.sliderText.text = Mathf.RoundToInt(color.b * 255).ToString();
                 }
             }
         }
+    }
+    void UpdateColorFromRGB()
+    {
+        float r = 0f, g = 0f, b = 0f;
+        foreach (SliderTextPair pair in sliderTextPairs)
+        {
+            if (pair.slider != null && pair.sliderText != null)
+            {
+                string sliderName = pair.slider.name.ToLower();
+
+                if (sliderName.Contains("red"))
+                {
+                    r = pair.slider.value;
+                }
+                else if (sliderName.Contains("g"))
+                {
+                    g = pair.slider.value;
+                }
+                else if (sliderName.Contains("b"))
+                {
+                    b = pair.slider.value;
+                }
+            }
+        }
+        Color.RGBToHSV(new Color(r, g, b), out currenrtHue, out currentSaturation, out currentValue);
+        UpdateOutputImage();
+        UpdatePickerPosition();
+        hueSlider.value = currenrtHue;
+        hexText.text = "";
     }
 
 }

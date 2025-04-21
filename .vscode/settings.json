@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "extra17-20.sln"
+    "dotnet.defaultSolution": "ColorPicker.sln"
 }
