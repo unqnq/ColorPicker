@@ -8,31 +8,37 @@ public class CreateDestroyBox : MonoBehaviour
     [SerializeField] private int boxScale;
     [SerializeField] private GameObject cube;
     public ColorData colorData;
+    private GameObject colorPickerPanel;
 
     void Awake()
     {
         myCamera = Camera.main;
+        colorPickerPanel = GameObject.Find("ColorPickerPanel");
     }
 
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (colorPickerPanel.activeSelf)
         {
-            SpawnBox();
-        }
-        if(Input.GetMouseButtonDown(1))
-        {
-            RaycastHit rHit;
-            Ray ray = myCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out rHit))
+            if (Input.GetMouseButtonDown(0))
             {
-                GameObject temp = rHit.collider.gameObject;
-                if (temp.CompareTag("Cube"))
+                SpawnBox();
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                RaycastHit rHit;
+                Ray ray = myCamera.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out rHit))
                 {
-                    Destroy(temp);
+                    GameObject temp = rHit.collider.gameObject;
+                    if (temp.CompareTag("Cube"))
+                    {
+                        Destroy(temp);
+                    }
                 }
             }
         }
+
     }
 
     void SpawnBox()
@@ -45,13 +51,13 @@ public class CreateDestroyBox : MonoBehaviour
             int pointY = (int)rHit.point.y;
             int pointZ = (int)rHit.point.z;
 
-            for (int x = pointX; x < pointX+boxScale; x++)
+            for (int x = pointX; x < pointX + boxScale; x++)
             {
-                for (int y = pointY; y < pointY+boxScale; y++)
+                for (int y = pointY; y < pointY + boxScale; y++)
                 {
-                    for (int z = pointZ; z < pointZ+boxScale; z++)
+                    for (int z = pointZ; z < pointZ + boxScale; z++)
                     {
-                        GameObject temp = Instantiate(cube, new Vector3(x,y+cube.transform.localScale.y,z), Quaternion.identity);
+                        GameObject temp = Instantiate(cube, new Vector3(x, y + cube.transform.localScale.y, z), Quaternion.identity);
                         temp.tag = "Cube";
                         temp.GetComponent<MeshRenderer>().material.color = colorData.currrentColor;
                     }
