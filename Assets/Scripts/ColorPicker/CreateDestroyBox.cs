@@ -8,17 +8,17 @@ public class CreateDestroyBox : MonoBehaviour
     [SerializeField] private int boxScale;
     [SerializeField] private GameObject cube;
     public ColorData colorData;
-    private GameObject colorPickerPanel;
+    public GameObject colorPickerPanel;
 
     void Awake()
     {
         myCamera = Camera.main;
-        colorPickerPanel = GameObject.Find("ColorPickerPanel");
+        // colorPickerPanel = GameObject.Find("ColorPickerPanel");
     }
 
     void Update()
     {
-        if (colorPickerPanel.activeSelf)
+        if (!colorPickerPanel.activeSelf)
         {
             if (Input.GetMouseButtonDown(0))
             {
